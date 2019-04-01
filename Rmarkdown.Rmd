@@ -1,0 +1,163 @@
+---
+title: "Untitled"
+author: "Anonymous"
+date: "2019年4月1日"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r}
+# Reference: http://www.systematicportfolio.com
+# Evaluate and analyze Trading Strategies
+rm(list=ls())
+#
+con = gzcon(url('http://www.systematicportfolio.com/sit.gz', 'rb'))
+source(con)
+close(con)
+```
+
+```{r}
+load.packages('quantmod')
+# data is a time series of price
+# signal is a indicator vector for buy and sell
+bt.simple <- function(data, signal)
+{
+  # lag serial
+  signal <- lag(signal,1)
+  # back fill
+  signal <- na.locf(signal, na.rm = FALSE)
+  signal[is.na(signal)] = 0
+  # calculate close-to-close returns
+  # ROC() : Calculate the (rate of) change of a series over n periods.
+  ret <- ROC(Cl(data), type="discrete")
+  ret[1] = 0
+  # compute stats
+  bt <- list()
+  bt$ret <- ret * signal 
+  bt$equity <- cumprod(1 + bt$ret)
+  return(bt)
+}
+```
+```{r}
+# Test for bt.simple functions
+# load historical prices from Yahoo Finance
+# buy and hold
+# MA cross (moving average)
+# Cl: get closing price
+#
+ # if price large than moving mean, buy
+
+```
+```{r}
+
+#---------------------------------------------------------------------
+# Create a chart showing the strategies perfromance in 2000:2009
+dates <- '2000::2018'
+
+# chartSeries() : Charting tool to create standard financial charts given a time series like object
+
+#------------------------------------------------------------------------
+library(magrittr)
+# plot using ggplot2 
+  #geom_hline(yintercept = c(1.0, 0.6)) # +  
+  #geom_text(aes( 0, 0.6, label = 0.6, vjust = -1))
+```
+```{r}
+#===================================================================
+# sample code to implement the above strategies using the backtesting 
+# library in the Systematic Investor Toolbox:
+#*****************************************************************
+# Load historical data
+#******************************************************************    
+load.packages('quantmod')
+tickers <- spl('SPY')
+
+data1 <- new.env() # data is a environment
+
+# bt.prep function merges and aligns all symbols in the data environment
+
+names(data1)
+#prices<-Ad(data$SPY)
+#data$prices<-prices
+#data$weight<-prices * NA
+#data$execution.price <- prices * NA
+head(data1$prices)
+tail(data1$prices)
+#*****************************************************************
+# Code Strategies
+#*****************************************************************
+# bt.run computes the equity curve of strategy specified by data$weight matrix. 
+# The data$weight matrix holds weights (signals) to open/close positions
+# Buy & Hold 
+# Reference: https://github.com/systematicinvestor/SIT/blob/master/R/bt.summary.r
+data1$weight[] <- 1
+
+# MA Cross
+# bt.apply function applies user given function to each symbol in the data environment
+prices<-data1$prices
+sma.1 <- bt.apply(data1, function(x) { SMA(Cl(x), 200) } ) 
+head(sma.1, 201)
+data1$weight[] <- NA # update weights matirx
+data1$weight[] <- iif(prices >= sma.1, 1, 0)
+#
+#etf4.all<-readRDS("etf4_xts_all")
+#
+
+```
+```{r}
+#----------------------------------------------------------
+# Introduction to plota.layout function
+# https://www.r-bloggers.com/introduction-to-plota-library-in-the-systematic-investor-toolbox/
+#---------------------------------------------------------
+load.packages('quantmod')
+
+# download sample data from Yahoo
+
+png(filename = 'plot1.png', width = 500, height = 500, units = 'px', pointsize = 12, bg = 'white')
+dev.off()
+# ---------------------------------------------------------
+# To create a simple chart of SPY with RSI and Legend:
+layout(c(1,1,2,3))
+#--------------------------------------------------------------
+# To create a chart with second Y axis:
+#
+
+# to plot second Y axis, free some space on left side
+# e.g. set LeftMargin=3
+#
+# To plot daily and monthly on the same plot: 
+
+# To plot daily, weekly and monthly:
+
+layout(c(1,2,3))
+
+
+
+```
+
+
+
+
+
