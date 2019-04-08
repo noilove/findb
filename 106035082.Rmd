@@ -1,0 +1,149 @@
+---
+title: "Untitled"
+author: "Anonymous"
+date: "2019年4月8日"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+```{r}
+# signal is a indicator vector for buy and sell
+bt.simple <- function(data, signal)
+{
+  # lag serial
+  signal <- lag(signal,1)
+  # back fill
+  signal <- na.locf(signal, na.rm = FALSE)
+  signal[is.na(signal)] = 0
+  # calculate close-to-close returns
+  # ROC() : Calculate the (rate of) change of a series over n periods.
+  ret <- ROC(Cl(data), type="discrete")
+  ret[1] = 0
+  # compute stats
+  bt <- list()
+  bt$ret <- ret * signal 
+  bt$equity <- cumprod(1 + bt$ret)
+  return(bt)
+}
+```
+```{r}
+# Test for bt.simple functions
+# load historical prices from Yahoo Finance
+
+```
+
+```{r}
+#
+library(magrittr)
+# plot using ggplot2 
+```
+```{r}
+#===================================================================
+# sample code to implement the above strategies using the backtesting 
+# library in the Systematic Investor Toolbox:
+#*****************************************************************
+# Load historical data
+#******************************************************************    
+
+
+data <- new.env() # data is a environment
+
+```
+```{r}
+# bt.prep function merges and aligns all symbols in the data environment
+names(data)
+#prices<-Ad(data$SPY)
+#data$prices<-prices
+#data$weight<-prices * NA
+#data$execution.price <- prices * NA
+head(data$prices)
+tail(data$prices)
+```
+```{r}
+#*****************************************************************
+# Code Strategies
+#*****************************************************************
+# bt.run computes the equity curve of strategy specified by data$weight matrix. 
+# The data$weight matrix holds weights (signals) to open/close positions
+# Buy & Hold 
+data$weight[] <- 1
+# MA Cross
+# bt.apply function applies user given function to each symbol in the data environment
+prices<-data$prices
+data$weight[] <- NA # update weights matirx
+
+```
+
+```{r}
+#====================================================================================
+# Example: using etf4 to compare their performance using 50-day and 200-day moving average investment strategy 
+# https://systematicinvestor.wordpress.com/2014/08/01/adjusted-momentum/
+#*************************************************************************************
+etf4.all<-readRDS("D:/finDB/0401/FinDB_0401/0408/etf4_xts_all")
+```
+```{r}
+# 0050
+# library(xts)
+data1<-new.env()
+# To use bt.run() function，you have to setup three input
+# prices，weidht and execution prices
+data1$prices<-etf4.all.1$`0050`
+prices<-data1$prices
+prices
+# 
+```
+```{r}
+sma50<-SMA(prices, 50)
+head(sma50, 51)
+# buy and hold for 0050
+names(data1)
+data1$dates
+data1$prices
+data1$prices<-prices
+```
+```{r}
+data1$weidht
+data1$execution.price=prices
+# data1$execution.price = data1$prices = etf4.all.1$`0050`
+data1$weight[] = 1
+# sma 200 for 0050
+prices<-data1$prices
+sma200<-SMA(prices, 200)
+head(sma200, 201)
+# sma 50 for 0050
+sma50<-SMA(prices, 50)
+head(sma50, 51)
+
+# sma 50 for 005, short allow
+# summary of investment
+# You can plot in ggplot2
+#
+title = "Cumulative returns of 0050s"
+
+```
+
+
+```{r}
+# strategy.performance.snapshoot(): 
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
